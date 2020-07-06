@@ -2,17 +2,14 @@
 
 ## 文件
 题目源码
+```
 .
 ├── checker
-
 │   ├── check.c
-
 │   ├── check.go
-
 │   └── check.h
-
 └── main.go
-
+```
 flag_detector为赛时的题目文件
 
 
