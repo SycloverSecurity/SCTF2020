@@ -1,0 +1,9 @@
+version: "2"
+services:
+  jsonhub:
+    volumes:
+      - ./log:/var/tmp
+    build: .
+    restart: always
+    ports:
+      - "80:8000"

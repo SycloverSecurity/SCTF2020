@@ -1,0 +1,15 @@
+server{
+        listen       80;
+        server_name  localhost;
+        charset UTF-8;
+        access_log      /var/log/nginx/web1_access.log;
+        error_log       /var/log/nginx/web1_error.log;
+
+        client_max_body_size 75M;
+        location / {
+            include uwsgi_params;
+            uwsgi_pass 127.0.0.1:8000;
+            uwsgi_read_timeout 2;
+        }
+    }
+

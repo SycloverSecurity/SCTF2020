@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>JsonHub</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+</head>
+<body>
+<style scoped>
+.el-button {
+    width: 100%;
+    margin-top: 4%;
+}
+.el-checkbox__label {
+    font-size: 12px;
+}
+.form-function {
+    margin-top: 20px;
+}
+.el-link {
+    float: right;
+    color: #40a9ff;
+    font-size: 12px;
+    margin-left: 8px;
+}
+.span {
+    margin-top: 20px;
+}
+.login-form {
+    margin: 2% 0px 0px 38%;
+    width: 24%;
+}
+.input {
+    margin-top: 5%;
+    border: 1px;
+}
+#login-div {
+    margin-top: 5%;
+    background: url("../static/login.svg");
+}
+
+.el-select {
+    width: 100%;
+    margin-top: 5%;
+}
+</style>
+<div id="login-div">
+        <h1 style="text-align: center">Reg</h1>
+        <div class="login-form">
+
+            <el-input
+                class="input"
+                placeholder="Username"
+                v-model="username"
+            >
+            </el-input>
+            <el-input
+                class="input"
+                placeholder="Password"
+                v-model="password"
+                show-password
+            >
+            </el-input>
+            <el-input
+                class="input"
+                placeholder="Confirm Password"
+                v-model="password2"
+                show-password
+            >
+            </el-input>
+            <span class="span">
+                <div class="form-function">
+                    <el-checkbox style="float: left" size="small"
+                        ><span style="font-size: 12px"
+                            >auto login</span
+                        ></el-checkbox
+                    >
+                    <el-link href="/login/">Login</el-link>
+                </div>
+            </span>
+            <br />
+            <el-button type="primary" @click="submit">Submit</el-button>
+        </div>
+    </div>
+</body>
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+{#<script src="https://cdn.bootcdn.net/ajax/libs/element-ui/2.13.2/index.js"></script>#}
+<script>
+var app=new Vue({
+    el:"#login-div",
+    data() {
+        return {
+            username: "",
+            password: "",
+            password2: "",
+        };
+    },
+    methods: {
+        submit: function() {
+            if(this.password !== this.password2){
+                this.$message.error("The two passwords are inconsistent");
+            }
+            else{
+                var data = { username: this.username, password: this.password };
+                var path = "/reg/";
+                axios.post(path, data).then(res => {
+                    if (res.data.code === 0) {
+                        this.$message({
+                            message: "Reg Successful!",
+                            type: "success"
+                        });
+                        setTimeout(()=>{
+                            location.href = "/login/"
+                        },2000)
+                    } else if (res.data.code===1) {
+                        this.$message.error("Username already reg");
+                    } else {
+                        this.$message.error("Error: "+res.data.message);
+                        this.$message.error("Unknown error please check HTTP connection or contact admin");
+                    }
+                });
+            }
+
+        }
+    }
+})
+</script>
+</html>
