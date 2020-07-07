@@ -1,0 +1,1 @@
+su -c "cd /usr/local/apache-tomcat-7.0.104/bin/ && ./catalina.sh run" tomcat

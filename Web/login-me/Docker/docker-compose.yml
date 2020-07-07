@@ -1,0 +1,60 @@
+version: '3.7'
+services:
+  nginx_server:
+    build: ./nginx_server
+    image: cl0und/nginx_server
+    container_name: nginx_server
+    command: ["nginx", "-g", "daemon off;"]
+    volumes:
+      - ./nginx_server/log:/nginx_log/
+    ports: 
+      - 8080:8080
+    networks:
+        syclover_net:
+          ipv4_address: 172.19.0.2
+
+  cas_server:
+    build: ./cas_server
+    image: cl0und/cas_server
+    container_name: cas_server
+    command: sh /root/init.sh
+    # ports: 
+    #   - 80:8080
+    networks:
+        syclover_net:
+          ipv4_address: 172.19.0.3
+    deploy:
+        resources:
+            limits:
+              cpus: '6'
+              memory: 12G
+
+  mysql_server:
+    environment:
+      - MYSQL_ROOT_PASSWORD:HYasjHTh
+    build: ./mysql_server
+    image: cl0und/mysql_server
+    container_name: mysql_server
+    command: sh /root/init.sh
+    # ports: 
+    #   - 3306:3306
+    networks:
+        syclover_net:
+          ipv4_address: 172.19.0.4
+
+  client_server:
+    build: ./client_server
+    image: cl0und/client_server
+    container_name: client_server
+    command: sh /root/init.sh
+    ports: 
+      - 8888:8080
+    networks:
+        syclover_net:
+          ipv4_address: 172.19.0.5
+
+networks:
+   syclover_net:
+      ipam:
+         config:
+         - subnet: 172.19.0.0/24

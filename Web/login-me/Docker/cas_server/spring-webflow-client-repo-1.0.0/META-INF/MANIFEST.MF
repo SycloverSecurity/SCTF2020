@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Implementation-Title: Spring Webflow Client Repository
+Implementation-Version: 1.0.0
+Archiver-Version: Plexus Archiver
+Built-By: Misagh
+Specification-Vendor: Jasig
+Specification-Title: Spring Webflow Client Repository
+Implementation-Vendor-Id: org.jasig
+Created-By: Apache Maven 3.3.1
+Build-Jdk: 1.8.0_31
+Specification-Version: 1.0.0
+Implementation-Vendor: Jasig
+
