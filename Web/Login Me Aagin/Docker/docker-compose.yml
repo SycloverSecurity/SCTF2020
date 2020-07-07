@@ -1,0 +1,31 @@
+version: '3.6'
+
+services: 
+    sctf2020_ngix:
+        build: ./nginx
+        container_name: sctf2020nginx
+        networks: 
+            - sctf2020_network
+        ports: 
+            - 80:80
+        entrypoint: ["nginx","-g","daemon off;"]
+
+    sctf2020_shiro:
+        build: ./shiro
+        container_name: sctf2020shiro
+        networks: 
+            - sctf2020_network
+        restart: always
+        entrypoint: ["/jre1.8.0_251/bin/java","-jar","/sctf2020_jar-0.0.1-SNAPSHOT.jar"]
+
+    sctf2020_tomcat:
+        build: ./tomcat
+        container_name: sctf2020tomcat
+        networks: 
+            - sctf2020_network
+        restart: always
+        entrypoint: ["bash","-c","/apache-tomcat-8.5.0/bin/startup.sh start && tail -f /apache-tomcat-8.5.0/logs/catalina.out"]
+
+networks: 
+    sctf2020_network:
+        name: syclover
