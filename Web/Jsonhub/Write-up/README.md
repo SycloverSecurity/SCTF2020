@@ -65,7 +65,7 @@ Content-Length: 100
 然后我们在自己的vps上搭一个服务，继续跳转到本地127.0.0.1:8000/flask_rpc
 就可以SSRF访问flask_rpc开始打flask
 
-### UTF16
+### UTF16 && unicode
 ```python
 @app.before_request
 def before_request():
