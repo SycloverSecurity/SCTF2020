@@ -4,9 +4,9 @@
 
 ### 0x00 题目信息
 
-![image-20200707141451780](README.assets/image-20200707141451780.png)
+![image-20200707141451780](SCTF2020-EasyMojo.assets/image-20200707141451780.png)
 
-![image-20200707141648515](README.assets/image-20200707141648515.png)
+![image-20200707141648515](SCTF2020-EasyMojo.assets/image-20200707141648515.png)
 
 题目提供的文件如下：
 
@@ -198,15 +198,15 @@ index 000000000000..db3f50613cd5
 
 虽然v8的漏洞利用是现成的，但是因为Chrome默认情况不能直接调用MojoJS，如果要使用MojoJS，需要加上启动参数`--enable-blink-features=MojoJS`。如果成功利用v8漏洞就可以修改当前Frame对象内部的一个关键变量让Frame拥有调用MojoJS的能力，这个变量就是`content::RenderFrameImpl::enabled_bindings_`
 
-![image-20200707145847482](README.assets/image-20200707145847482.png)
+![image-20200707145847482](SCTF2020-EasyMojo.assets/image-20200707145847482.png)
 
 这个变量的可能取值如下：
 
-![image-20200707145939941](README.assets/image-20200707145939941.png)
+![image-20200707145939941](SCTF2020-EasyMojo.assets/image-20200707145939941.png)
 
 其中，当`enabled_bindings_ == BINDINGS_POLICY_MOJO_WEB_UI`后会在MainFrame创建ScriptContext的时候开启Mojo接口
 
-![image-20200707150235554](README.assets/image-20200707150235554.png)
+![image-20200707150235554](SCTF2020-EasyMojo.assets/image-20200707150235554.png)
 
 v8 exploit的部分就不说了，网上有现成的文章，讲的会比我详细，我直接讲解如何找到并修改这个变量。
 
@@ -216,7 +216,7 @@ v8 exploit的部分就不说了，网上有现成的文章，讲的会比我详�
 content::`anonymous namespace'::g_frame_map
 ```
 
-![image-20200707164822512](README.assets/image-20200707164822512.png)
+![image-20200707164822512](SCTF2020-EasyMojo.assets/image-20200707164822512.png)
 
 
 
@@ -226,11 +226,11 @@ chrome.dll base => `g_frame_map` => `RenderFrameImpl`(main frame) => `RenderFram
 
 chrome.dll地址的泄露可以通过window对象来完成，window对象内部有几个回调指针指向chrome.dll内的函数，所以可以通过这一点泄露出chrome.dll的基地址。
 
-![image-20200707174347419](README.assets/image-20200707174347419.png)
+![image-20200707174347419](SCTF2020-EasyMojo.assets/image-20200707174347419.png)
 
 然后通过计算偏移找到g_frame_map，直接找第一个元素保存的RenderFrameImpl指针，最后通过偏移找到`enabled_bindings_`
 
-![image-20200707174653462](README.assets/image-20200707174653462.png)
+![image-20200707174653462](SCTF2020-EasyMojo.assets/image-20200707174653462.png)
 
 将其修改为2，然后reload页面，enable mojo完成。
 
@@ -371,11 +371,11 @@ void VirtualFunction() override {
 
 callback对象的结构如下：
 
-![image-20200514172920841](README.assets/image-20200514172920841.png)
+![image-20200514172920841](SCTF2020-EasyMojo.assets/image-20200514172920841.png)
 
 可以看到只有一个`bind_state_`，`bind_state_`对象的结构如下：
 
-![image-20200707200000290](README.assets/image-20200707200000290.png)
+![image-20200707200000290](SCTF2020-EasyMojo.assets/image-20200707200000290.png)
 
 重要的成员：`polymorphic_invoke`、`functor`
 
@@ -383,13 +383,13 @@ callback对象的结构如下：
 
 `functor`之后的数据，包括`bound_args_`在内都是参数，详细结构如下：
 
-![image-20200514173405409](README.assets/image-20200514173405409.png)
+![image-20200514173405409](SCTF2020-EasyMojo.assets/image-20200514173405409.png)
 
 
 
 了解需要伪造的对象之后，可以看下回调是怎么被调用的，选取一个符合条件的虚函数，对应的汇编如下：
 
-![image-20200514171008760](README.assets/image-20200514171008760.png)
+![image-20200514171008760](SCTF2020-EasyMojo.assets/image-20200514171008760.png)
 
 最开始的rcx指向`this`，`rcx+10h`就是callback对象所在位置，之后的`rcx+8`就指向了回调的入口点。
 
@@ -403,7 +403,7 @@ void VirtualFunction() override() {
 
 我选择使用的虚函数是`content::WebContentsImpl::GetWakeLockContext`
 
-![image-20200707193149380](README.assets/image-20200707193149380.png)
+![image-20200707193149380](SCTF2020-EasyMojo.assets/image-20200707193149380.png)
 
 我个人推荐使用CodeQL去找这些虚函数，时间有限，关于这个部分我后面可能会单独写一篇文章来讲。而且这个虚函数还将`this`指针写入了新对象的内存中，之后可以通过使用其他虚函数将`this`指针泄露出来，这样做的目的就是将被控制的堆块地址泄露出来，那就获得了一块知道地址的并且可控的堆地址。
 
@@ -417,7 +417,7 @@ void VirtualFunction() override {
 
 最终找到一个合适的虚函数`DictionaryIterator::Start`
 
-![image-20200707200526109](README.assets/image-20200707200526109.png)
+![image-20200707200526109](SCTF2020-EasyMojo.assets/image-20200707200526109.png)
 
 可以泄露可控的堆地址之后，可以将对应的操作封装起来：
 
@@ -492,7 +492,7 @@ async function allocReadable(allocData=new ArrayBuffer(0)) {
 
 之后的任务就是伪造callback对象，伪造callback对象，只需要关注`polymorphic_invoke`怎么找的问题，可以看看这个`invoker`一般情况下是什么样的：
 
-![image-20200707200928740](README.assets/image-20200707200928740.png)
+![image-20200707200928740](SCTF2020-EasyMojo.assets/image-20200707200928740.png)
 
 图片中的这个`invoker`也是我exp中使用的，这个`invoker`传递了四个参数，可以满足绝大部分需求。
 
@@ -562,7 +562,7 @@ print("[*] Done!");
 
 需要注意的是，新frame不能和自己exp页面同源，不然Chrome不会创建新进程。
 
-![image-20200707202353468](README.assets/image-20200707202353468.png)
+![image-20200707202353468](SCTF2020-EasyMojo.assets/image-20200707202353468.png)
 
 #### Remote
 
@@ -570,13 +570,13 @@ print("[*] Done!");
 
 弹计算器：
 
-![image-20200707203322027](README.assets/image-20200707203322027.png)
+![image-20200707203322027](SCTF2020-EasyMojo.assets/image-20200707203322027.png)
 
 获取flag：
 
-![image-20200707203528771](README.assets/image-20200707203528771.png)
+![image-20200707203528771](SCTF2020-EasyMojo.assets/image-20200707203528771.png)
 
-![image-20200707203558718](README.assets/image-20200707203558718.png)
+![image-20200707203558718](SCTF2020-EasyMojo.assets/image-20200707203558718.png)
 
 ### 0x03 写在最后
 
